@@ -1,0 +1,20 @@
+/* styles.css */
+
+.cloned-code-block-footer {
+    border-top: 1px solid var(--gm-sys-color-outline, #dadce0); /* Use Gemini's variable or a fallback */
+    border-bottom: none; /* Original header might have a bottom border, remove for footer */
+    margin-top: 0px; /* Adjust if there's unwanted space */
+    /* The gds-title-s class usually provides bottom padding/margin which might be too much for the top of the footer */
+    /* You might need to adjust padding here if it looks off */
+    padding-bottom: 0 !important; /* Example: Force remove bottom padding if inherited */
+}
+
+/* Ensure the buttons container in the footer looks right */
+.cloned-code-block-footer .buttons {
+    /* Add specific styles if needed */
+}
+
+/* Ensure the copy button in the footer looks right */
+.cloned-code-block-footer .copy-button {
+    /* Add specific styles if needed */
+}

@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "Gemini Bottom Copy Button",
+  "version": "1.0.1",
+  "description": "Adds a copy button to the bottom of code blocks on the Gemini AI chatbot site.",
+  "permissions": [],
+  "content_scripts": [
+    {
+      "matches": ["https://gemini.google.com/*"],
+      "js": ["content.js"],
+      "css": ["styles.css"],
+      "run_at": "document_idle"
+    }
+  ]
+}
