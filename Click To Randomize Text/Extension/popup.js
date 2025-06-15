@@ -2,7 +2,7 @@ const toggleSwitch = document.getElementById('toggleSwitch');
 const blurToggle = document.getElementById('blurToggle');
 
 // Load saved blur state from sync storage (persists across sessions)
-chrome.storage.sync.get('blurEnabled', (data) => {
+browser.storage.sync.get('blurEnabled').then((data) => {
     blurToggle.checked = !!data.blurEnabled;
 });
 
@@ -10,17 +10,16 @@ chrome.storage.sync.get('blurEnabled', (data) => {
 blurToggle.addEventListener('change', () => {
     const isEnabled = blurToggle.checked;
     // Save to sync storage
-    chrome.storage.sync.set({ blurEnabled: isEnabled });
+    browser.storage.sync.set({ blurEnabled: isEnabled });
 });
 
-
 // Get the current active tab to manage its state
-chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+browser.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
     const currentTab = tabs[0];
     if (!currentTab || !currentTab.id) return;
     const tabId = currentTab.id;
 
-    // Disable the toggle on non-web pages (e.g., chrome://extensions)
+    // Disable the toggle on non-web pages (e.g., about:addons)
     if (!currentTab.url?.startsWith('http')) {
         toggleSwitch.disabled = true;
         blurToggle.disabled = true;
@@ -28,7 +27,7 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     }
 
     // Load the saved state for this tab and set the toggle accordingly
-    chrome.storage.session.get([tabId.toString()], (result) => {
+    browser.storage.local.get([tabId.toString()]).then((result) => {
         toggleSwitch.checked = !!result[tabId];
     });
 
@@ -36,17 +35,13 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     toggleSwitch.addEventListener('change', () => {
         const isEnabled = toggleSwitch.checked;
 
-        // Save the new state to session storage for this tab
-        chrome.storage.session.set({ [tabId]: isEnabled });
+        // Save the new state to local storage for this tab
+        browser.storage.local.set({ [tabId]: isEnabled });
 
-        // Ensure the content script is injected before sending a message
-        chrome.scripting.executeScript({
-            target: { tabId: tabId },
-            files: ['content.js']
-        }).then(() => {
-            // Send a message to the content script to activate or deactivate
-            const message = { action: isEnabled ? "activate" : "deactivate" };
-            chrome.tabs.sendMessage(tabId, message);
-        }).catch(err => console.error("Script injection failed:", err));
+        // Send a message to the content script to activate or deactivate
+        const message = { action: isEnabled ? "activate" : "deactivate" };
+        browser.tabs.sendMessage(tabId, message).catch(err => 
+            console.error("Message sending failed:", err)
+        );
     });
 });
