@@ -1,16 +1,14 @@
 {
-  "manifest_version": 3,
-  "name": "Local - Alt Click Text Randomizer",
+  "manifest_version": 2,
+  "name": "Alt Click Text Randomizer",
   "version": "2.0",
   "description": "Click the icon to toggle text randomization on the current page.",
   "permissions": [
     "storage",
-    "scripting"
+    "<all_urls>",
+    "tabs"
   ],
-  "host_permissions": [
-    "<all_urls>"
-  ],
-  "action": {
+  "browser_action": {
     "default_popup": "popup.html",
     "default_title": "Toggle Text Randomizer",
     "default_icon": "icon.png"
@@ -19,6 +17,14 @@
     "128": "icon.png"
   },
   "background": {
-    "service_worker": "background.js"
-  }
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_end"
+    }
+  ]
 }
