@@ -21,10 +21,15 @@ Eine Firefox-Version der "Click To Randomize Text" Chrome Extension. Diese Add-o
 
 ##### Selbstsignierung
 
-- Erstelle ein Konto bei addons.mozilla.org
-- Lade dein Add-on hoch, aber markiere es als "selbst gehostet"
+- Erstelle ein Konto bei `addons.mozilla.org`
+- Lade dein Add-on als ZIP hoch, aber markiere es als "selbst gehostet"
 - Mozilla signiert es automatisch
 - Die signierte .xpi-Datei kannst du dann dauerhaft installieren
+  - `https://addons.mozilla.org/de/developers/` aufrufen
+  - Dein Addon anklicken "Produktseite bearbeiten"
+  - Auf der linken seite auf "Stauts und Versionen Verwalten"
+  - Auf die Versionsnummer Klicken
+  - Oben befindet sich ein *.xpi Dateilink zum Downloaden, der das Addon diretkt in Firefox Installiert.
 
 ### Verwendung & Features
 
