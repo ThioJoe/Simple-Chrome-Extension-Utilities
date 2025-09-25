@@ -68,7 +68,6 @@ if (typeof window.textRandomizerInjected === 'undefined') {
             }
         }
 
-
         return result;
     }
 
@@ -161,7 +160,6 @@ if (typeof window.textRandomizerInjected === 'undefined') {
             });
         }
     }
-
 
     // --- Event Listener and DOM manipulation logic is now wrapped in functions ---
 
@@ -296,7 +294,7 @@ if (typeof window.textRandomizerInjected === 'undefined') {
         if (event.key === 'Escape') {
             deactivate();
             // Notify the background script to update the toggle state
-            chrome.runtime.sendMessage({ action: "deactivated_by_escape" });
+            browser.runtime.sendMessage({ action: "deactivated_by_escape" });
         } else if (event.ctrlKey && event.key.toLowerCase() === 'z') {
             event.preventDefault();
             if (historyStack.length > 0) {
@@ -327,7 +325,7 @@ if (typeof window.textRandomizerInjected === 'undefined') {
         window.textRandomizerActive = true;
 
         // Fetch initial blur setting when activating
-        chrome.storage.sync.get('blurEnabled', (data) => {
+        browser.storage.sync.get('blurEnabled').then((data) => {
             shouldBlur = !!data.blurEnabled;
         });
 
@@ -343,7 +341,7 @@ if (typeof window.textRandomizerInjected === 'undefined') {
         console.log("Text Randomizer deactivated.");
     }
 
-    chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
         if (request.action === "activate") {
             activate();
         } else if (request.action === "deactivate") {
@@ -352,7 +350,7 @@ if (typeof window.textRandomizerInjected === 'undefined') {
     });
 
     // Listen for storage changes to update blur setting live, even if popup is closed
-    chrome.storage.onChanged.addListener((changes, namespace) => {
+    browser.storage.onChanged.addListener((changes, namespace) => {
         if (namespace === 'sync' && changes.blurEnabled) {
             shouldBlur = !!changes.blurEnabled.newValue;
         }
