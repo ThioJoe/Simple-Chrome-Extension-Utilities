@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "Unicode Domain Warning",
+  "version": "1.0",
+  "description": "Shows a warning when visiting a domain with Unicode characters, and displays the non-Unicode \"Punycode\" version of the domain.",
+    "icons": {
+	"48":  "images/icon-48.png",
+	"96":  "images/icon-96.png",
+    "128": "images/icon-128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content.js"
+      ]
+    }
+  ],
+  "permissions": [
+    "storage"
+  ],
+  "options_page": "options.html"
+}

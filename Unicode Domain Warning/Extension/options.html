@@ -1,0 +1,96 @@
+<!-- options.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Unicode Domain Warning Options</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      width: 600px;
+      background-color: #f9f9f9;
+    }
+    h1 {
+      color: #333;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 10px;
+    }
+    h2 {
+      color: #555;
+      margin-top: 30px;
+    }
+    #whitelist-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+      background-color: #fff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    #whitelist-table th, #whitelist-table td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    #whitelist-table th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+    #whitelist-table tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    #whitelist-table td a {
+      color: #007bff;
+      text-decoration: none;
+    }
+    #whitelist-table td a:hover {
+      text-decoration: underline;
+    }
+    #whitelist-table td:nth-child(2) {
+      max-width: 250px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .remove-btn {
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    .remove-btn:hover {
+      background-color: #c82333;
+    }
+    #no-domains-msg {
+      padding: 15px;
+      text-align: center;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Unicode Domain Warning Options</h1>
+
+  <h2>Whitelisted Domains</h2>
+  <table id="whitelist-table">
+    <thead>
+      <tr>
+        <th>Domain (Punycode)</th>
+        <th>Page Title</th>
+        <th style="width: 120px;">Date Added</th>
+        <th style="width: 80px;">Action</th>
+      </tr>
+    </thead>
+    <tbody id="whitelist-container">
+      <!-- Domains will be added here by options.js -->
+    </tbody>
+  </table>
+  <div id="no-domains-msg" style="display: none;">No domains whitelisted.</div>
+
+  <script src="options.js"></script>
+</body>
+</html>
