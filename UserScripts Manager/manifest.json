@@ -1,9 +1,9 @@
 {
   "manifest_version": 3,
   "name": "Userscript Manager",
-  "version": "1.0",
+  "version": "1.1",
   "description": "A simple manager to run custom JavaScript on websites.",
-  "permissions": ["storage", "scripting", "activeTab"],
+  "permissions": ["storage", "scripting", "activeTab", "userScripts", "webNavigation"],
   "host_permissions": ["<all_urls>"],
   "background": {
     "service_worker": "background.js"
