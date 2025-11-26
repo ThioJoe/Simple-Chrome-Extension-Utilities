@@ -17,6 +17,12 @@
     const isIDN = (hostname.toLowerCase() !== 'localhost') && (/[^\u0000-\u007f]/.test(hostname) || hostname.toLowerCase().includes('xn--'));
 
     if (isIDN) {
+      // Check if the banner has already been dismissed for this domain for this session/tab
+      const dismissedDomains = JSON.parse(sessionStorage.getItem('dismissed_idn_domains') || '[]');
+      if (dismissedDomains.includes(hostname)) {
+        return;
+      }
+
       // --- Create Banner ---
       const banner = document.createElement('div');
       banner.style.position = 'fixed';
@@ -90,7 +96,15 @@
       closeBtn.style.borderRadius = '4px';
       closeBtn.style.cursor = 'pointer';
       
-      closeBtn.onclick = () => banner.remove();
+      closeBtn.onclick = () => {
+        // Remember that the banner was dimissed for this domain for the rest of the session
+        const dismissed = JSON.parse(sessionStorage.getItem('dismissed_idn_domains') || '[]');
+        if (!dismissed.includes(hostname)) {
+          dismissed.push(hostname);
+          sessionStorage.setItem('dismissed_idn_domains', JSON.stringify(dismissed));
+        }
+        banner.remove();
+      };
       
       banner.appendChild(closeBtn);
       document.body.prepend(banner);
