@@ -55,16 +55,59 @@
             font-size: 16px;
         }
 
+        .domain-label {
+            font-size: 0.85em;
+            color: #666;
+            margin-bottom: 8px;
+            display: block;
+            letter-spacing: 0.5px;
+        }
+
+        .domain-box {
+            margin-top: 15px;
+            padding: 15px;
+            border: 1px solid #ffebee;
+            background-color: #fff8f8;
+            border-radius: 6px;            
+        }
+
         .domain {
             background: #f5f5f5;
             padding: 15px;
             border: 1px solid #ddd;
             border-radius: 6px;
             font-family: monospace;
-            font-size: 1.3em;
+            font-size: 3em;
             margin: 25px 0;
             word-break: break-all;
-            color: #d84315;
+            color: #0c0c0c;
+        }
+
+        .unicode-box {
+            margin-top: 15px;
+            padding: 15px;
+            border: 1px solid #ffebee;
+            background-color: #fff8f8;
+            border-radius: 6px;
+            display: none; /* Hidden by default, shown if Unicode conversion succeeds*/
+            
+        }
+
+        .unicode-char {
+            color: #dd1313;
+            font-weight: 900;
+            background-color: #ffccbc;
+            padding: 0 2px;
+            border-radius: 2px;
+            margin: 0 1px;
+        }
+
+        .unicode-label {
+            font-size: 0.85em;
+            color: #666;
+            margin-bottom: 8px;
+            display: block;
+            letter-spacing: 0.5px;
         }
 
         .buttons {
@@ -134,9 +177,20 @@
         </div>
 
         <h1>Unicode Domain Detected</h1>
-        <p>This site uses special Unicode characters (IDN) in its domain name. This is often legitimate, but can sometimes be used to spoof legitimate websites.</p>
+        <p>This site uses special Unicode characters (IDN) in its domain name. This is often legitimate, but can
+            sometimes be used to spoof legitimate websites with look-alike characters.</p>
 
-        <div class="domain" id="domain-display"></div>
+        <div id="unicode-box" class="unicode-box">
+            <span class="unicode-label">Unicode Characters Highlighted:</span>
+            <div id="unicode-domain" class="domain" style="margin: 0; background: white; border: 1px solid #ffcdd2;">
+            </div>
+        </div>
+
+        <div id="domain-box" class="domain-box">
+            <span class="domain-label">Punycode Version of Domain:</span>
+            <div id="domain-display" class="domain" style="margin: 0; background: white; border: 1px solid #ffcdd2;">
+            </div>
+        </div>
 
         <div class="buttons">
             <button id="go-back-btn">Go Back</button>
@@ -145,6 +199,8 @@
 
         <button id="proceed-btn">Continue without adding to whitelist</button>
     </div>
+    <!-- Load Punycode lib first -->
+    <script src="punycode.js"></script>
     <script src="warning.js"></script>
 </body>
 

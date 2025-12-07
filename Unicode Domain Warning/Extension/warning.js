@@ -5,8 +5,47 @@ let hostname = '';
 
 try {
     // Parse the hostname to display it and use it for keys
+    // NOTE: 'new URL(...).hostname' usually returns the Punycode (xn--) version automatically in browsers.
     hostname = new URL(targetUrl).hostname;
     document.getElementById('domain-display').innerText = hostname;
+
+    // --- Unicode Highlighting Logic ---
+    // We try to show the "visual" version and highlight the unicode characters
+    try {
+        if (window.punycode) {
+            const unicodeBox = document.getElementById('unicode-box');
+            const unicodeDisplay = document.getElementById('unicode-domain');
+
+            // Convert xn-- format to Unicode string
+            const decoded = window.punycode.toUnicode(hostname);
+
+            // Only show the box if decoding actually changed something (it was punycode)
+            // or if we detect non-ascii characters directly.
+            if (decoded !== hostname || /[^\u0000-\u007f]/.test(decoded)) {
+                let htmlBuilder = '';
+
+                // Iterate through the string by code point to handle surrogate pairs correctly
+                for (const char of decoded) {
+                    // Check if code point is outside ASCII range (0-127)
+                    if (char.codePointAt(0) > 127) {
+                        htmlBuilder += `<span class="unicode-char" title="U+${char.codePointAt(0).toString(16).toUpperCase()}">${char}</span>`;
+                    } else {
+                        htmlBuilder += char;
+                    }
+                }
+
+                unicodeDisplay.innerHTML = htmlBuilder;
+                unicodeBox.style.display = 'block';
+            }
+        } else {
+            console.warn("Punycode library not found; skipping unicode preview.");
+        }
+    } catch (err) {
+        // Silently fail the unicode box if library missing or parsing fails
+        console.error("Unicode preview failed:", err);
+    }
+    // ---------------------------------------
+
 } catch (e) {
     document.getElementById('domain-display').innerText = 'Unknown Domain';
 }
