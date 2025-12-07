@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="UTF-8">
   <title>Unicode Domain Warning Options</title>
   <style>
     body {
@@ -93,6 +94,27 @@
     </tbody>
   </table>
   <div id="no-domains-msg" style="display: none;">No domains whitelisted.</div>
+
+  <div style="background: white; padding: 20px; border: 1px solid #ddd; border-radius: 5px; margin-top: 50px; margin-bottom: 20px;">
+    <h2 style="margin-top: 0; color: #555;">Allowed Unicode Characters</h2>
+    <p style="font-size: 14px; color: #666; margin-bottom: 10px;">
+      These specific characters will be ignored when checking domains for Unicode characters.<br>
+    </p>
+  
+    <textarea id="allowed-chars-input" rows="3" placeholder="Input allowed characters here (e.g., ü ñ é)"
+      style="width: 100%; box-sizing: border-box; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 4px;"></textarea>
+  
+    <div style="margin-top: 10px; display: flex; justify-content: space-between; align-items: center;">
+      <button id="save-chars-btn"
+        style="background-color: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Update Allowed Characters</button>
+        
+      <span id="save-status" style="color: #28a745; font-size: 14px; opacity: 0; transition: opacity 0.5s;">Saved!</span>
+    </div>
+  
+    <div id="allowed-chars-preview"
+      style="margin-top: 15px; font-size: 32px; letter-spacing: 12px; font-family: monospace; word-break: break-all; color: #333; min-height: 40px; background: #f9f9f9; padding: 10px; border-radius: 4px;">
+    </div>
+  </div>
 
   <script src="punycode.js"></script>
   <script src="options.js"></script>

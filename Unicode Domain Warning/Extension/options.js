@@ -2,10 +2,52 @@
 
 // Restores options from chrome.storage
 function restoreOptions() {
-  chrome.storage.sync.get(['whitelist', 'whitelistMetadata'], (data) => {
+  chrome.storage.sync.get(['whitelist', 'whitelistMetadata', 'allowedChars'], (data) => {
     const whitelist = data.whitelist || [];
     const metadata = data.whitelistMetadata || {};
+    const allowedChars = data.allowedChars || '';
+
     renderWhitelist(whitelist, metadata);
+
+    // Initialize Allowed Characters UI
+    const charInput = document.getElementById('allowed-chars-input');
+    charInput.value = allowedChars;
+    renderAllowedCharsPreview(allowedChars);
+  });
+}
+
+// Update the visual preview of allowed characters
+function renderAllowedCharsPreview(chars) {
+  const preview = document.getElementById('allowed-chars-preview');
+  // Display them with spaces for clarity if the user didn't type spaces, 
+  // but the CSS letter-spacing handles the visual spread mostly.
+  preview.textContent = chars;
+  
+  // Hide the preview box if there are no characters
+  preview.style.display = chars.length > 0 ? 'block' : 'none';
+}
+
+// Saves the allowed characters
+function saveAllowedChars() {
+  const charInput = document.getElementById('allowed-chars-input');
+  // Remove all whitespace (spaces, tabs, newlines)
+  const rawChars = charInput.value.replace(/\s/g, '');
+
+  // De-duplicate characters using a Set
+  const uniqueChars = [...new Set(rawChars)].join('');
+
+  // Update input to reflect cleaned/deduped version
+  charInput.value = uniqueChars;
+  renderAllowedCharsPreview(uniqueChars);
+
+  chrome.storage.sync.set({
+    allowedChars: uniqueChars
+  }, () => {
+    const status = document.getElementById('save-status');
+    status.style.opacity = '1';
+    setTimeout(() => {
+      status.style.opacity = '0';
+    }, 1500);
   });
 }
 
@@ -115,4 +157,9 @@ function removeDomain(event) {
 }
 
 // Listen for when the DOM is loaded
-document.addEventListener('DOMContentLoaded', restoreOptions);
+document.addEventListener('DOMContentLoaded', () => {
+  restoreOptions();
+
+  // Event listeners for Allowed Characters
+  document.getElementById('save-chars-btn').addEventListener('click', saveAllowedChars);
+});
