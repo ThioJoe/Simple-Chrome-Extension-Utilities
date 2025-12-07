@@ -64,7 +64,7 @@
         }
 
         .domain-label {
-            font-size: 0.85em;
+            font-size: 1.0em;
             color: #666;
             margin-bottom: 8px;
             display: block;
@@ -74,8 +74,8 @@
         .domain-box {
             margin-top: 15px;
             padding: 15px;
-            border: 1px solid #ffebee;
-            background-color: #fff8f8;
+            border: 1px solid #d1d1d1;
+            background-color: #efefef;
             border-radius: 6px;            
         }
 
@@ -95,7 +95,7 @@
             margin-top: 15px;
             padding: 15px;
             border: 1px solid #ffebee;
-            background-color: #fff8f8;
+            background-color: #ffeaea;
             border-radius: 6px;
             display: none; /* Hidden by default, shown if Unicode conversion succeeds*/
             
@@ -111,7 +111,7 @@
         }
 
         .unicode-label {
-            font-size: 0.85em;
+            font-size: 1.0em;
             color: #666;
             margin-bottom: 8px;
             display: block;
@@ -119,10 +119,111 @@
         }
 
         .caution-note {
-            background-color: #ffef95;
+            background-color: #fff3b1;
             padding: 12px 18px;
             border-radius: 6px;
             border-left: 4px solid #e6a900;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        .caution-main {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .caution-text {
+            margin: 0;
+            font-size: 1.4em
+        }
+
+        .tips-toggle {
+            background: none;
+            border: 1px solid #c9a000;
+            color: #7a6000;
+            padding: 4px 10px;
+            font-size: 13px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: normal;
+            transition: all 0.2s;
+        }
+
+        .tips-toggle:hover {
+            background-color: rgba(255, 255, 255, 0.5);
+            border-color: #a68500;
+        }
+
+        .tips-toggle svg {
+            width: 14px;
+            height: 14px;
+            transition: transform 0.2s;
+        }
+
+        .tips-toggle.expanded svg {
+            transform: rotate(180deg);
+        }
+
+        .tips-content {
+            display: none;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #e6c84a;
+            text-align: left;
+            font-size: 14px;
+            line-height: 1.5;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            width: 0;
+            min-width: 100%;
+        }
+
+        .tips-content.visible {
+            display: block;
+        }
+
+        .punycode-toggle {
+            background: none;
+            border: 1px solid #ddd;
+            color: #666;
+            padding: 5px 14px;
+            font-size: 0.92em;
+            border-radius: 4px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 10px;
+            transition: all 0.2s;
+        }
+
+        .punycode-toggle:hover {
+            background-color: #f5f5f5;
+            border-color: #bbb;
+        }
+
+        .punycode-toggle svg {
+            width: 14px;
+            height: 14px;
+            transition: transform 0.2s;
+        }
+
+        .punycode-toggle.expanded svg {
+            transform: rotate(180deg);
+        }
+
+        #domain-box.collapsible {
+            display: none;
+        }
+
+        #domain-box.collapsible.visible {
+            display: block;
         }
 
         .buttons {
@@ -253,17 +354,29 @@
         <p class="intro-text">This site uses special Unicode characters in its domain name. This is often legitimate, but can
             sometimes be used to spoof legitimate websites with look-alike characters.</p>
 
-        <p class="caution-note">If this is not expected, <strong>be cautious</strong>. You could try typing the website address directly in the address bar, and see if this warning still appears.</p>
+        <div class="caution-note">
+            <div class="caution-main">
+                <span class="caution-text">If this is not expected, <strong>be cautious</strong>.</span>
+                <button class="tips-toggle" id="tips-toggle"> Not Sure? </button>
+            </div>
+            <div class="tips-content" id="tips-content">
+                Try typing the website address directly in the address bar and see if this warning still appears. If it doesn't, the link you clicked may have been trying to impersonate the legitimate site.
+            </div>
+        </div>
 
         <div id="unicode-box" class="unicode-box">
             <span class="unicode-label">Unicode Characters Highlighted:</span>
             <div id="unicode-domain" class="domain" style="margin: 0; background: white; border: 1px solid #ffcdd2;">
             </div>
+            <button class="punycode-toggle" id="punycode-toggle">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                Show Punycode
+            </button>
         </div>
 
         <div id="domain-box" class="domain-box">
             <span class="domain-label">Punycode Version of Domain:</span>
-            <div id="domain-display" class="domain" style="margin: 0; background: white; border: 1px solid #ffcdd2;">
+            <div id="domain-display" class="domain" style="margin: 0; background: white; border: 1px solid #c4c4c4;">
             </div>
         </div>
 

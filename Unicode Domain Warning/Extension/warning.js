@@ -15,6 +15,7 @@ try {
         if (window.punycode) {
             const unicodeBox = document.getElementById('unicode-box');
             const unicodeDisplay = document.getElementById('unicode-domain');
+            const domainBox = document.getElementById('domain-box');
 
             // Convert xn-- format to Unicode string
             const decoded = window.punycode.toUnicode(hostname);
@@ -40,6 +41,9 @@ try {
                 }
 
                 unicodeBox.style.display = 'block';
+                
+                // Make punycode box collapsible since unicode is available
+                domainBox.classList.add('collapsible');
             }
         } else {
             console.warn("Punycode library not found; skipping unicode preview.");
@@ -135,5 +139,30 @@ if (whyLink && whyTooltip) {
         if (!whyTooltip.contains(e.target) && e.target !== whyLink) {
             whyTooltip.classList.remove('visible');
         }
+    });
+}
+
+// 5. Tips toggle
+const tipsToggle = document.getElementById('tips-toggle');
+const tipsContent = document.getElementById('tips-content');
+
+if (tipsToggle && tipsContent) {
+    tipsToggle.addEventListener('click', function() {
+        tipsContent.classList.toggle('visible');
+        tipsToggle.classList.toggle('expanded');
+        tipsToggle.innerHTML = tipsContent.classList.contains('visible') 
+            ? 'Hide Tips'
+            : 'Not Sure?';
+    });
+}
+
+// 6. Punycode toggle (when unicode is available)
+const punycodeToggle = document.getElementById('punycode-toggle');
+const domainBox = document.getElementById('domain-box');
+
+if (punycodeToggle && domainBox) {
+    punycodeToggle.addEventListener('click', function() {
+        domainBox.classList.add('visible');
+        punycodeToggle.style.display = 'none';
     });
 }
