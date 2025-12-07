@@ -94,6 +94,13 @@
             background-color: #ef6c00;
         }
 
+        #go-back-btn.disabled {
+            background-color: #ccc;
+            color: #666;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
         #whitelist-btn {
             background-color: white;
             border: 1px solid #ccc;
@@ -127,8 +134,7 @@
         </div>
 
         <h1>Unicode Domain Detected</h1>
-        <p>This site uses special Unicode characters (IDN) in its domain name. This is often legitimate, but can sometimes be
-            used to spoof legitimate websites.</p>
+        <p>This site uses special Unicode characters (IDN) in its domain name. This is often legitimate, but can sometimes be used to spoof legitimate websites.</p>
 
         <div class="domain" id="domain-display"></div>
 
