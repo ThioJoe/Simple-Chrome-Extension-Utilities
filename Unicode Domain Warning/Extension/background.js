@@ -17,24 +17,24 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
         const isIDN = (/[^\u0000-\u007f]/.test(hostname) || hostname.toLowerCase().includes('xn--'));
 
         if (isIDN) {
-            // 3. Check Whitelist (Permanent) and Session List (Temporary)
+            // 3. Check Permanent Whitelist
             chrome.storage.sync.get(['whitelist'], (syncData) => {
                 const whitelist = syncData.whitelist || [];
                 if (whitelist.includes(hostname)) return; // Allowed permanently
 
+                // 4. Check Session List (Secure In-Memory Storage)
                 chrome.storage.session.get(['dismissedDomains'], (sessionData) => {
                     const dismissed = sessionData.dismissedDomains || [];
                     if (dismissed.includes(hostname)) return; // Allowed for this session
 
-                    // 4. Redirect to Warning Page
-                    // We encode the original URL so we can redirect back to it later
+                    // 5. Redirect to Warning Page
+                    // We pass the full original URL so the warning page knows where to send us back
                     const warningUrl = chrome.runtime.getURL('warning.html') + `?target=${encodeURIComponent(changeInfo.url)}`;
                     chrome.tabs.update(tabId, { url: warningUrl });
                 });
             });
         }
     } catch (error) {
-        // Ignore invalid URLs
         console.error('Error parsing URL:', error);
     }
 });
