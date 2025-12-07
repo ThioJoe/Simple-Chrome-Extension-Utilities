@@ -22,19 +22,23 @@ try {
             // Only show the box if decoding actually changed something (it was punycode)
             // or if we detect non-ascii characters directly.
             if (decoded !== hostname || /[^\u0000-\u007f]/.test(decoded)) {
-                let htmlBuilder = '';
+                // Clear any existing content
+                unicodeDisplay.textContent = '';
 
                 // Iterate through the string by code point to handle surrogate pairs correctly
                 for (const char of decoded) {
                     // Check if code point is outside ASCII range (0-127)
                     if (char.codePointAt(0) > 127) {
-                        htmlBuilder += `<span class="unicode-char" title="U+${char.codePointAt(0).toString(16).toUpperCase()}">${char}</span>`;
+                        const span = document.createElement('span');
+                        span.className = 'unicode-char';
+                        span.title = `U+${char.codePointAt(0).toString(16).toUpperCase()}`;
+                        span.textContent = char;
+                        unicodeDisplay.appendChild(span);
                     } else {
-                        htmlBuilder += char;
+                        unicodeDisplay.appendChild(document.createTextNode(char));
                     }
                 }
 
-                unicodeDisplay.innerHTML = htmlBuilder;
                 unicodeBox.style.display = 'block';
             }
         } else {
