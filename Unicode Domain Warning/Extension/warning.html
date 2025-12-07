@@ -21,7 +21,8 @@
             background: rgba(255, 255, 255, 0.9);
             padding: 40px;
             border-radius: 12px;
-            max-width: 600px;
+            width: 100%;
+            box-sizing: border-box;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
         }
 
@@ -53,6 +54,13 @@
         p {
             line-height: 1.5;
             font-size: 16px;
+            max-width: 650px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .intro-text {
+            font-size: 1.6em;
         }
 
         .domain-label {
@@ -108,6 +116,13 @@
             margin-bottom: 8px;
             display: block;
             letter-spacing: 0.5px;
+        }
+
+        .caution-note {
+            background-color: #ffef95;
+            padding: 12px 18px;
+            border-radius: 6px;
+            border-left: 4px solid #e6a900;
         }
 
         .buttons {
@@ -166,19 +181,79 @@
         #proceed-btn:hover {
             color: #333;
         }
+
+        .outer-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            width: fit-content;
+            min-width: 400px;
+            max-width: 90vw;
+        }
+
+        .why-link-container {
+            text-align: right;
+            margin-bottom: 8px;
+            position: relative;
+        }
+
+        .why-link {
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 13px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .why-link:hover {
+            color: white;
+            text-decoration: underline;
+        }
+
+        .why-tooltip {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background: white;
+            color: #333;
+            padding: 12px 16px;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            font-size: 13px;
+            text-align: left;
+            width: 300px;
+            z-index: 100;
+            margin-top: 5px;
+        }
+
+        .why-tooltip.visible {
+            display: block;
+        }
     </style>
 </head>
 
 <body>
-    <div class="container">
+    <div class="outer-wrapper">
+        <div class="why-link-container">
+            <a class="why-link" id="why-link"><strong>Why am I seeing this?</strong></a>
+            <div class="why-tooltip" id="why-tooltip">
+                You're seeing this because you have the <strong>Unicode Domain Warning</strong> browser extension installed. 
+                <br><br>This extension alerts you when a website uses special Unicode characters in its domain name, which are used in some international domain languages,
+                but can also be used in phishing attacks. This extension simply gives you a heads up in case such a domain was not expected.
+            </div>
+        </div>
+
+        <div class="container">
         <div class="branding">
             <img src="images/icon-128.png" alt="Extension Icon">
             <h2>Unicode Domain Warning</h2>
         </div>
 
         <h1>Unicode Domain Detected</h1>
-        <p>This site uses special Unicode characters (IDN) in its domain name. This is often legitimate, but can
+        <p class="intro-text">This site uses special Unicode characters in its domain name. This is often legitimate, but can
             sometimes be used to spoof legitimate websites with look-alike characters.</p>
+
+        <p class="caution-note">If this is not expected, <strong>be cautious</strong>. You could try typing the website address directly in the address bar, and see if this warning still appears.</p>
 
         <div id="unicode-box" class="unicode-box">
             <span class="unicode-label">Unicode Characters Highlighted:</span>
@@ -198,6 +273,7 @@
         </div>
 
         <button id="proceed-btn">Continue without adding to whitelist</button>
+    </div>
     </div>
     <!-- Load Punycode lib first -->
     <script src="punycode.js"></script>

@@ -118,3 +118,22 @@ document.getElementById('proceed-btn').onclick = () => {
         }
     });
 };
+
+// 4. "Why am I seeing this?" tooltip toggle
+const whyLink = document.getElementById('why-link');
+const whyTooltip = document.getElementById('why-tooltip');
+
+if (whyLink && whyTooltip) {
+    whyLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        whyTooltip.classList.toggle('visible');
+    });
+
+    // Close tooltip when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!whyTooltip.contains(e.target) && e.target !== whyLink) {
+            whyTooltip.classList.remove('visible');
+        }
+    });
+}
