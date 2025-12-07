@@ -13,7 +13,6 @@
 
     if (isIDN) {
         // 3. Check Whitelists
-        // Content scripts are ISOLATED. The web page cannot modify chrome.storage.
         chrome.storage.sync.get(['whitelist', 'allowedChars'], (syncData) => {
             const whitelist = syncData.whitelist || [];
             const allowedChars = syncData.allowedChars || '';
@@ -23,7 +22,7 @@
 
             // B. Allowed Characters Check
             if (allowedChars) {
-                // We can access 'punycode' because it was loaded in manifest before this script
+                // accessing the global punycode object loaded by punycode.js
                 const unicodeHostname = window.punycode ? window.punycode.toUnicode(hostname) : hostname;
 
                 const isAllowed = [...unicodeHostname].every(char => {
@@ -33,20 +32,27 @@
                 if (isAllowed) return;
             }
 
-            // C. Temporary "Proceed" Check
-            // We use 'local' storage for the "session" list because content scripts 
-            // cannot access 'chrome.storage.session' directly without a background worker.
-            chrome.storage.local.get(['tempDismissed'], (localData) => {
-                const dismissed = localData.tempDismissed || [];
+            // C. Temporary "Proceed" Check (Session Logic)
+            chrome.storage.local.get(['tempDismissed', 'sessionToken'], (localData) => {
+                // Get the base URL for the warning page to extract the Dynamic ID
+                const warningPageUrl = chrome.runtime.getURL('warning.html');
+                const currentSessionToken = warningPageUrl;
 
-                // If the domain is in the temp dismissed list, we allow it.
-                // (Optional: You could add timestamp logic here to expire it after X hours)
+                const storedToken = localData.sessionToken;
+                let dismissed = localData.tempDismissed || [];
+
+                // If the tokens don't match, the browser restarted. Wipe the session list.
+                if (storedToken !== currentSessionToken) {
+                    dismissed = [];
+                }
+
+                // If currently dismissed for this valid session, stop here.
                 if (dismissed.includes(hostname)) return;
 
                 // 4. Redirect to Warning Page
-                // window.location.replace() prevents the user from getting stuck in a back-button loop
-                const warningUrl = chrome.runtime.getURL('warning.html') + `?target=${encodeURIComponent(window.location.href)}`;
-                window.location.replace(warningUrl);
+                // We use the base URL we already grabbed and append the target
+                const finalRedirectUrl = warningPageUrl + `?target=${encodeURIComponent(window.location.href)}`;
+                window.location.replace(finalRedirectUrl);
             });
         });
     }

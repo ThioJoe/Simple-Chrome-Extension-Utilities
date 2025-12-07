@@ -25,12 +25,8 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": [
-        "warning.html"
-      ],
-      "matches": [
-        "<all_urls>"
-      ],
+      "resources": [ "warning.html" ],
+      "matches": [ "<all_urls>" ],
       "use_dynamic_url": true
     }
   ],

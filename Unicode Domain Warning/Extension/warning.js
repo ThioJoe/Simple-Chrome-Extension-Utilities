@@ -1,4 +1,14 @@
 // warning.js
+
+// --- Helper: Check if we are inside an iframe ---
+function isFramed() {
+    try {
+        return window.self !== window.top;
+    } catch (e) {
+        return true; // Assume framed if we can't check
+    }
+}
+
 const params = new URLSearchParams(window.location.search);
 const targetUrl = params.get('target');
 let hostname = '';
@@ -58,16 +68,7 @@ try {
     document.getElementById('domain-display').innerText = 'Unknown Domain';
 }
 
-// --- Helper: Check if we are inside an iframe ---
-function isFramed() {
-    try {
-        return window.self !== window.top;
-    } catch (e) {
-        return true; // Assume framed if we can't check
-    }
-}
-
-// 1. Go Back Logic (No changes needed)
+// 1. Go Back Logic
 const goBackBtn = document.getElementById('go-back-btn');
 if (window.history.length <= 2) {
     goBackBtn.classList.add('disabled');
@@ -127,13 +128,26 @@ document.getElementById('proceed-btn').onclick = () => {
     }
     // -----------------------
 
-    chrome.storage.local.get(['tempDismissed'], (data) => {
-        const dismissed = data.tempDismissed || [];
+    chrome.storage.local.get(['tempDismissed', 'sessionToken'], (data) => {
+        // Since we are ON the warning page, our own hostname IS the dynamic ID
+        const currentSessionToken = chrome.runtime.getURL('warning.html');
+
+        let dismissed = data.tempDismissed || [];
+        let storedToken = data.sessionToken;
+
+        // Check if session is stale
+        if (storedToken !== currentSessionToken) {
+            dismissed = [];
+            storedToken = currentSessionToken;
+        }
 
         if (!dismissed.includes(hostname)) {
             dismissed.push(hostname);
 
-            chrome.storage.local.set({ tempDismissed: dismissed }, () => {
+            chrome.storage.local.set({
+                tempDismissed: dismissed,
+                sessionToken: storedToken
+            }, () => {
                 window.location.href = targetUrl;
             });
         } else {
