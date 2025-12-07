@@ -260,6 +260,26 @@
             box-shadow: none;
         }
 
+        #go-back-btn.disabled[title] {
+            position: relative;
+        }
+
+        #go-back-btn.disabled[title]:hover::after {
+            content: attr(title);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: white;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            margin-bottom: 6px;
+            z-index: 100;
+        }
+
         #whitelist-btn {
             background-color: white;
             border: 1px solid #ccc;
