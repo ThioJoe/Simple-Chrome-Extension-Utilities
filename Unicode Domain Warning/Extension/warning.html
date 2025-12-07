@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Unicode Domain Detected</title>
+    <style>
+        body {
+            background-color: #ffb300;
+            color: #333333;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            border-radius: 12px;
+            max-width: 600px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .branding {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            color: #555;
+        }
+
+        .branding img {
+            width: 48px;
+            height: 48px;
+        }
+
+        .branding h2 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: normal;
+        }
+
+        h1 {
+            margin-top: 0;
+            color: #e65100;
+        }
+
+        p {
+            line-height: 1.5;
+            font-size: 16px;
+        }
+
+        .domain {
+            background: #f5f5f5;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 1.3em;
+            margin: 25px 0;
+            word-break: break-all;
+            color: #d84315;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        button {
+            padding: 10px 24px;
+            font-size: 15px;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+            transition: all 0.2s;
+            font-weight: bold;
+        }
+
+        #go-back-btn {
+            background-color: #e65100;
+            color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        #go-back-btn:hover {
+            background-color: #ef6c00;
+        }
+
+        #whitelist-btn {
+            background-color: white;
+            border: 1px solid #ccc;
+            color: #555;
+        }
+
+        #whitelist-btn:hover {
+            background-color: #f0f0f0;
+        }
+
+        #proceed-btn {
+            background-color: transparent;
+            color: #666;
+            text-decoration: underline;
+            font-size: 14px;
+            font-weight: normal;
+            margin-top: 15px;
+        }
+
+        #proceed-btn:hover {
+            color: #333;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="branding">
+            <img src="images/icon-128.png" alt="Extension Icon">
+            <h2>Unicode Domain Warning</h2>
+        </div>
+
+        <h1>Unicode Domain Detected</h1>
+        <p>This site uses special Unicode characters (IDN) in its domain name. This is often legitimate, but can sometimes be
+            used to spoof legitimate websites.</p>
+
+        <div class="domain" id="domain-display"></div>
+
+        <div class="buttons">
+            <button id="go-back-btn">Go Back</button>
+            <button id="whitelist-btn">Whitelist & Continue</button>
+        </div>
+
+        <button id="proceed-btn">Continue without adding to whitelist</button>
+    </div>
+    <script src="warning.js"></script>
+</body>
+
+</html>
