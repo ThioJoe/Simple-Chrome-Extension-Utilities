@@ -8,12 +8,31 @@
     "96": "images/icon-96.png",
     "128": "images/icon-128.png"
   },
-  "background": {
-    "service_worker": "background.js"
-  },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "punycode.js",
+        "content.js"
+      ],
+      "run_at": "document_start"
+    }
+  ],
   "permissions": [
-    "storage",
-    "tabs"
+    "storage"
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "warning.html"
+      ],
+      "matches": [
+        "<all_urls>"
+      ],
+      "use_dynamic_url": true
+    }
   ],
   "options_page": "options.html"
 }

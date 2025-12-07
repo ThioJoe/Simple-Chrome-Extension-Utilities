@@ -58,31 +58,41 @@ try {
     document.getElementById('domain-display').innerText = 'Unknown Domain';
 }
 
-// 1. Go Back Logic
-const goBackBtn = document.getElementById('go-back-btn');
+// --- Helper: Check if we are inside an iframe ---
+function isFramed() {
+    try {
+        return window.self !== window.top;
+    } catch (e) {
+        return true; // Assume framed if we can't check
+    }
+}
 
-// Check if there is history to go back to.
-// length <= 2 covers:
-// 1. New Tab (Length 1)
-// 2. Open link in New Tab (Length 2: Bad Site -> Warning).
-//    In this case, 'back' would just loop back to the bad site/redirector.
+// 1. Go Back Logic (No changes needed)
+const goBackBtn = document.getElementById('go-back-btn');
 if (window.history.length <= 2) {
-    // Disable the button - no safe page to go back to
     goBackBtn.classList.add('disabled');
     goBackBtn.disabled = true;
     goBackBtn.title = "No previous page to go back to";
 } else {
     goBackBtn.onclick = () => {
-        // We know length > 2 here, so we assume the entry immediately behind us (-1)
-        // is the 'Bad Domain' that caused the redirect.
-        // We jump back 2 steps to skip it and return to the safe page before it.
         window.history.go(-2);
     };
 }
 
 // 2. Whitelist (Permanent)
-// Stored in chrome.storage.sync (Persists across restarts and devices)
 document.getElementById('whitelist-btn').onclick = () => {
+    // --- SAFE MODE CHECK ---
+    if (isFramed()) {
+        const userConfirmed = confirm(
+            "Security Warning:\n\n" +
+            "You are clicking 'Whitelist' from within a frame/embedded window.\n" +
+            "If you did not intend to whitelist this domain, click Cancel.\n\n" +
+            "Click OK to confirm whitelisting: " + hostname
+        );
+        if (!userConfirmed) return;
+    }
+    // -----------------------
+
     chrome.storage.sync.get(['whitelist', 'whitelistMetadata'], (data) => {
         const whitelist = data.whitelist || [];
         const metadata = data.whitelistMetadata || {};
@@ -95,7 +105,7 @@ document.getElementById('whitelist-btn').onclick = () => {
             };
 
             chrome.storage.sync.set({ whitelist, whitelistMetadata: metadata }, () => {
-                window.location.href = targetUrl; // Redirect back to original site
+                window.location.href = targetUrl;
             });
         } else {
             window.location.href = targetUrl;
@@ -104,16 +114,27 @@ document.getElementById('whitelist-btn').onclick = () => {
 };
 
 // 3. Proceed (Temporary / Session Only)
-// Stored in chrome.storage.session (Wiped when browser closes)
 document.getElementById('proceed-btn').onclick = () => {
-    chrome.storage.session.get(['dismissedDomains'], (data) => {
-        const dismissed = data.dismissedDomains || [];
+    // --- SAFE MODE CHECK ---
+    if (isFramed()) {
+        const userConfirmed = confirm(
+            "Security Warning:\n\n" +
+            "You are clicking 'Continue' from within a frame/embedded window.\n" +
+            "If you did not intend to bypass this warning, click Cancel.\n\n" +
+            "Click OK to proceed to: " + hostname
+        );
+        if (!userConfirmed) return;
+    }
+    // -----------------------
+
+    chrome.storage.local.get(['tempDismissed'], (data) => {
+        const dismissed = data.tempDismissed || [];
 
         if (!dismissed.includes(hostname)) {
             dismissed.push(hostname);
 
-            chrome.storage.session.set({ dismissedDomains: dismissed }, () => {
-                window.location.href = targetUrl; // Redirect back to original site
+            chrome.storage.local.set({ tempDismissed: dismissed }, () => {
+                window.location.href = targetUrl;
             });
         } else {
             window.location.href = targetUrl;
