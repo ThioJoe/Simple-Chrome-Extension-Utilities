@@ -6,8 +6,10 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      margin: 20px;
-      width: 600px;
+      margin: 20px auto; /* Centers on page */
+      width: fit-content;
+      min-width: 50vw;
+      max-width: 90vw; /* Expand up to 80% of viewport if necessary */
       background-color: #f9f9f9;
     }
     h1 {
@@ -27,10 +29,12 @@
       box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     }
     #whitelist-table th, #whitelist-table td {
+      box-sizing: border-box;
       border: 1px solid #ddd;
       padding: 10px;
       text-align: left;
       vertical-align: top;
+      font-size: 14px;
     }
     #whitelist-table th {
       background-color: #f2f2f2;
@@ -46,11 +50,10 @@
     #whitelist-table td a:hover {
       text-decoration: underline;
     }
+    /* Limit width of domain cells but allow wrapping */
+    #whitelist-table td:nth-child(1),
     #whitelist-table td:nth-child(2) {
-      max-width: 250px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      word-break: break-all;
     }
     .remove-btn {
       background-color: #dc3545;
@@ -79,8 +82,8 @@
   <table id="whitelist-table">
     <thead>
       <tr>
+        <th>Unicode</th>
         <th>Domain (Punycode)</th>
-        <th>Page Title</th>
         <th style="width: 120px;">Date Added</th>
         <th style="width: 80px;">Action</th>
       </tr>
@@ -91,6 +94,7 @@
   </table>
   <div id="no-domains-msg" style="display: none;">No domains whitelisted.</div>
 
+  <script src="punycode.js"></script>
   <script src="options.js"></script>
 </body>
 </html>

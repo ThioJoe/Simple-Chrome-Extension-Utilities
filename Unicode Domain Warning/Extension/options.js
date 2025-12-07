@@ -24,7 +24,30 @@ function renderWhitelist(whitelist, metadata) {
 
   whitelist.forEach(domain => {
     const row = document.createElement('tr');
-    
+
+    // Unicode Version Cell
+    const unicodeCell = document.createElement('td');
+    let unicodeString = '';
+    try {
+      if (window.punycode) {
+        unicodeString = window.punycode.toUnicode(domain);
+      } else {
+        unicodeString = '-';
+      }
+    } catch (e) {
+      console.error('Punycode conversion failed for', domain, e);
+      unicodeString = 'Error';
+    }
+
+    // Create Link for Unicode
+    const unicodeLink = document.createElement('a');
+    unicodeLink.href = `http://${domain}`;
+    unicodeLink.target = '_blank';
+    unicodeLink.textContent = unicodeString;
+
+    unicodeCell.appendChild(unicodeLink);
+    row.appendChild(unicodeCell);
+
     // Domain Cell (as hyperlink)
     const domainCell = document.createElement('td');
     const domainLink = document.createElement('a');
@@ -34,17 +57,9 @@ function renderWhitelist(whitelist, metadata) {
     domainCell.appendChild(domainLink);
     row.appendChild(domainCell);
 
-    // Page Title Cell
-    const titleCell = document.createElement('td');
-    const domainMetadata = metadata[domain];
-    titleCell.textContent = (domainMetadata && domainMetadata.title) ? domainMetadata.title : 'N/A';
-    if (titleCell.textContent !== 'N/A') {
-      titleCell.title = domainMetadata.title; // Show full title on hover
-    }
-    row.appendChild(titleCell);
-
     // Date Cell
     const dateCell = document.createElement('td');
+    const domainMetadata = metadata[domain];
     dateCell.textContent = (domainMetadata && domainMetadata.added) ? domainMetadata.added : 'N/A';
     row.appendChild(dateCell);
     
@@ -66,22 +81,32 @@ function renderWhitelist(whitelist, metadata) {
 function removeDomain(event) {
   const domainToRemove = event.target.dataset.domain;
   
+  // Lock the table and column widths to prevent layout shift
+  const table = document.getElementById('whitelist-table');
+  table.style.width = table.offsetWidth + 'px';
+  
+  // Lock header cell widths to prevent layout shift
+  const headerCells = table.querySelectorAll('th');
+  headerCells.forEach(cell => {
+    cell.style.width = cell.offsetWidth + 'px';
+  });
+  
   chrome.storage.sync.get(['whitelist', 'whitelistMetadata'], (data) => {
     let whitelist = data.whitelist || [];
     let metadata = data.whitelistMetadata || {};
 
     // Remove from whitelist array
     whitelist = whitelist.filter(domain => domain !== domainToRemove);
-    
+
     // Remove from metadata object
     if (metadata[domainToRemove]) {
       delete metadata[domainToRemove];
     }
 
     // Save the updated lists
-    chrome.storage.sync.set({ 
+    chrome.storage.sync.set({
       whitelist: whitelist,
-      whitelistMetadata: metadata 
+      whitelistMetadata: metadata
     }, () => {
       // Re-render the list
       renderWhitelist(whitelist, metadata);
