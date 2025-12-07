@@ -156,9 +156,35 @@ function removeDomain(event) {
   });
 }
 
+// Initialize version button and changelog modal
+function initVersionChangelog() {
+  // Get version from manifest
+  const manifest = chrome.runtime.getManifest();
+  const versionNumber = document.getElementById('version-number');
+  if (versionNumber) {
+    versionNumber.textContent = manifest.version;
+  }
+
+  // Modal elements
+  const modal = document.getElementById('changelog-modal');
+  const versionBtn = document.getElementById('version-btn');
+  const closeBtn = document.getElementById('modal-close');
+
+  // Open modal
+  versionBtn.addEventListener('click', () => {
+    modal.classList.add('show');
+  });
+
+  // Close modal with X button
+  closeBtn.addEventListener('click', () => {
+    modal.classList.remove('show');
+  });
+}
+
 // Listen for when the DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
   restoreOptions();
+  initVersionChangelog();
 
   // Event listeners for Allowed Characters
   document.getElementById('save-chars-btn').addEventListener('click', saveAllowedChars);
