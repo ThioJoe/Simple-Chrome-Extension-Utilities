@@ -70,13 +70,16 @@ try {
 
 // 1. Go Back Logic
 const goBackBtn = document.getElementById('go-back-btn');
-if (window.history.length <= 2) {
+// We only need to check if there is at least 1 previous page (length > 1).
+// Because we use window.location.replace, the previous page isn't added to history
+if (window.history.length <= 1) {
     goBackBtn.classList.add('disabled');
     goBackBtn.disabled = true;
     goBackBtn.title = "No previous page to go back to";
 } else {
     goBackBtn.onclick = () => {
-        window.history.go(-2);
+        // Just go back 1 step, because the bad site was overwritten.
+        window.history.back();
     };
 }
 
@@ -106,10 +109,11 @@ document.getElementById('whitelist-btn').onclick = () => {
             };
 
             chrome.storage.sync.set({ whitelist, whitelistMetadata: metadata }, () => {
-                window.location.href = targetUrl;
+                // Use replace() so Warning Page is removed from history
+                window.location.replace(targetUrl);
             });
         } else {
-            window.location.href = targetUrl;
+            window.location.replace(targetUrl);
         }
     });
 };
@@ -129,7 +133,6 @@ document.getElementById('proceed-btn').onclick = () => {
     // -----------------------
 
     chrome.storage.local.get(['tempDismissed', 'sessionToken'], (data) => {
-        // Since we are ON the warning page, our own hostname IS the dynamic ID
         const currentSessionToken = chrome.runtime.getURL('warning.html');
 
         let dismissed = data.tempDismissed || [];
@@ -148,10 +151,11 @@ document.getElementById('proceed-btn').onclick = () => {
                 tempDismissed: dismissed,
                 sessionToken: storedToken
             }, () => {
-                window.location.href = targetUrl;
+                // Use replace() so Warning Page is removed from history
+                window.location.replace(targetUrl);
             });
         } else {
-            window.location.href = targetUrl;
+            window.location.replace(targetUrl);
         }
     });
 };
