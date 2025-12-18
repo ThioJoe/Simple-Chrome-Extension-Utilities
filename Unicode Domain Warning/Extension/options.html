@@ -171,7 +171,11 @@
     Unicode Domain Warning Options
   </h1>
   
-  <div style="display: flex; justify-content: flex-end; margin-bottom: 10px;">
+  <div style="display: flex; justify-content: flex-end; align-items: center; gap: 12px; margin-bottom: 10px;">
+    <a href="https://exämple.thiojoe.com" target="_blank" 
+       style="background-color: #007bff; color: white; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-size: 13px; transition: background-color 0.2s;">
+      🔗 Try Demo Site: exämple.thiojoe.com
+    </a>
     <button id="version-btn" class="version-btn">
       <span>v<span id="version-number">...</span></span>
       <span style="font-size: 11px;">Changelog</span>
@@ -186,6 +190,13 @@
         <button class="modal-close" id="modal-close">&times;</button>
       </div>
       <div class="modal-body" id="changelog-content">
+	    <div class="changelog-version">
+          <h3>Version 1.2.1</h3>
+          <ul>
+            <li><strong>Security:</strong> Fixed possible technique malicious sites could use to bypass the extension.</li>
+            <li><strong>Feature:</strong> Added demo site link to options page.</li>
+          </ul>
+        </div>
         <div class="changelog-version">
           <h3>Version 1.2</h3>
           <ul>
