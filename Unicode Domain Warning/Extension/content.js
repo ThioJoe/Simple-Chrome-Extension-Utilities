@@ -12,6 +12,7 @@
     const isIDN = (/[^\u0000-\u007f]/.test(hostname) || hostname.toLowerCase().includes('xn--'));
 
     if (isIDN) {
+        const originalURL = window.location.href;
         // 3. Check Whitelists
         chrome.storage.sync.get(['whitelist', 'allowedChars'], (syncData) => {
             const whitelist = syncData.whitelist || [];
@@ -51,7 +52,7 @@
 
                 // 4. Redirect to Warning Page
                 // We use the base URL we already grabbed and append the target
-                const finalRedirectUrl = warningPageUrl + `?target=${encodeURIComponent(window.location.href)}`;
+                const finalRedirectUrl = warningPageUrl + `?target=${encodeURIComponent(originalURL)}`;
                 window.location.replace(finalRedirectUrl);
             });
         });
