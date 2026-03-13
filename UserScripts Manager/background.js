@@ -20,9 +20,8 @@ function getScriptWorld(code) {
  */
 async function updateRegisteredScripts() {
     try {
-        // 1. Configure the User Script world to allow 'eval'.
         if (chrome.userScripts.configureWorld) {
-             chrome.userScripts.configureWorld({
+            chrome.userScripts.configureWorld({
                 csp: "script-src 'self' 'unsafe-eval' 'unsafe-inline'; object-src 'self'"
             });
         }
@@ -32,13 +31,36 @@ async function updateRegisteredScripts() {
 
         await chrome.userScripts.unregister();
 
-        const scriptsToRegister = enabledScripts.map(script => ({
-            id: script.id,
-            matches: script.matches,
-            js: [{ code: script.code }],
-            world: getScriptWorld(script.code),
-            runAt: 'document_idle'
-        }));
+        const scriptsToRegister = enabledScripts.map(script => {
+            let combinedCode = "";
+
+            if (script.requireCodes && script.requireCodes.length > 0) {
+                script.requireCodes.forEach(reqCode => {
+                    combinedCode += reqCode + "\n\n";
+                });
+            }
+
+            if (script.grants && script.grants.length > 0 && !script.grants.includes('none')) {
+                combinedCode += `
+                    window.GM_addStyle = function(css) {
+                        const style = document.createElement('style');
+                        style.textContent = css;
+                        (document.head || document.documentElement).appendChild(style);
+                    };
+                    window.GM_info = { script: { name: "${script.name.replace(/"/g, '\\"')}" } };
+                \n\n`;
+            }
+
+            combinedCode += script.code;
+
+            return {
+                id: script.id,
+                matches: script.matches,
+                js: [{ code: combinedCode }],
+                world: getScriptWorld(script.code),
+                runAt: 'document_idle'
+            };
+        });
 
         if (scriptsToRegister.length > 0) {
             await chrome.userScripts.register(scriptsToRegister);

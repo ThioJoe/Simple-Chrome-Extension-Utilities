@@ -31,7 +31,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const name = nameMatch[1].trim();
         const matches = matchLines.map(line => line.match(/\/\/\s*@match\s+(.*)/)[1].trim());
 
-        return { name, matches };
+        const requireLines = code.match(/\/\/\s*@require\s+(.*)/g) || [];
+        const requires = requireLines.map(line => line.match(/\/\/\s*@require\s+(.*)/)[1].trim());
+
+        const grantLines = code.match(/\/\/\s*@grant\s+(.*)/g) || [];
+        const grants = grantLines.map(line => line.match(/\/\/\s*@grant\s+(.*)/)[1].trim());
+
+        return { name, matches, requires, grants };
     };
 
     /**
@@ -97,10 +103,30 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        addScriptBtn.disabled = true;
+        addScriptBtn.textContent = 'Fetching @require...';
+
+        let requireCodes = [];
+        try {
+            for (const url of meta.requires) {
+                const res = await fetch(url);
+                if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`);
+                requireCodes.push(await res.text());
+            }
+        } catch (err) {
+            errorMessageEl.textContent = `Error loading @require: ${err.message}`;
+            addScriptBtn.disabled = false;
+            addScriptBtn.textContent = 'Add Script';
+            return;
+        }
+
         const newScript = {
             id: `script_${Date.now()}`,
             name: meta.name,
             matches: meta.matches,
+            requires: meta.requires,
+            requireCodes: requireCodes,
+            grants: meta.grants,
             code: code,
             enabled: true,
         };
@@ -110,6 +136,8 @@ document.addEventListener('DOMContentLoaded', () => {
         await chrome.storage.local.set({ scripts });
 
         newScriptCodeEl.value = '';
+        addScriptBtn.disabled = false;
+        addScriptBtn.textContent = 'Add Script';
         await renderScripts();
     };
 
@@ -178,12 +206,32 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        saveEditBtn.disabled = true;
+        saveEditBtn.textContent = 'Saving...';
+
+        let requireCodes = [];
+        try {
+            for (const url of meta.requires) {
+                const res = await fetch(url);
+                if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`);
+                requireCodes.push(await res.text());
+            }
+        } catch (err) {
+            editErrorMessageEl.textContent = `Error loading @require: ${err.message}`;
+            saveEditBtn.disabled = false;
+            saveEditBtn.textContent = 'Save Changes';
+            return;
+        }
+
         const { scripts = [] } = await chrome.storage.local.get('scripts');
         const scriptIndex = scripts.findIndex(s => s.id === scriptIdToEdit);
 
         if (scriptIndex !== -1) {
             scripts[scriptIndex].name = meta.name;
             scripts[scriptIndex].matches = meta.matches;
+            scripts[scriptIndex].requires = meta.requires;
+            scripts[scriptIndex].requireCodes = requireCodes;
+            scripts[scriptIndex].grants = meta.grants;
             scripts[scriptIndex].code = updatedCode;
             await chrome.storage.local.set({ scripts });
 
@@ -191,8 +239,11 @@ document.addEventListener('DOMContentLoaded', () => {
             scriptIdToEdit = null;
             await renderScripts();
         } else {
-             editErrorMessageEl.textContent = 'Error: Could not find script to save.';
+            editErrorMessageEl.textContent = 'Error: Could not find script to save.';
         }
+
+        saveEditBtn.disabled = false;
+        saveEditBtn.textContent = 'Save Changes';
     };
 
     // --- Initial Setup ---
