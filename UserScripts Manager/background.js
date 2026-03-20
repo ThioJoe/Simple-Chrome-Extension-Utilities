@@ -58,7 +58,7 @@ async function updateRegisteredScripts() {
                 matches: script.matches,
                 js: [{ code: combinedCode }],
                 world: getScriptWorld(script.code),
-                runAt: 'document_idle'
+                runAt: script.runAt || 'document_idle'
             };
         });
 

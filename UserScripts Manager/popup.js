@@ -37,7 +37,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const grantLines = code.match(/\/\/\s*@grant\s+(.*)/g) || [];
         const grants = grantLines.map(line => line.match(/\/\/\s*@grant\s+(.*)/)[1].trim());
 
-        return { name, matches, requires, grants };
+        const runAtMatch = code.match(/\/\/\s*@run-at\s+(.*)/);
+        let runAt = 'document_idle';
+        if (runAtMatch) {
+            const rawRunAt = runAtMatch[1].trim().toLowerCase();
+            if (rawRunAt === 'document-start' || rawRunAt === 'document_start') runAt = 'document_start';
+            else if (rawRunAt === 'document-end' || rawRunAt === 'document_end') runAt = 'document_end';
+        }
+
+        return { name, matches, requires, grants, runAt };
     };
 
     /**
@@ -127,6 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
             requires: meta.requires,
             requireCodes: requireCodes,
             grants: meta.grants,
+            runAt: meta.runAt,
             code: code,
             enabled: true,
         };
@@ -140,6 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
         addScriptBtn.textContent = 'Add Script';
         await renderScripts();
     };
+
 
     /**
      * Handles clicks on the script list (edit, toggle, or delete).
@@ -232,6 +242,7 @@ document.addEventListener('DOMContentLoaded', () => {
             scripts[scriptIndex].requires = meta.requires;
             scripts[scriptIndex].requireCodes = requireCodes;
             scripts[scriptIndex].grants = meta.grants;
+            scripts[scriptIndex].runAt = meta.runAt;
             scripts[scriptIndex].code = updatedCode;
             await chrome.storage.local.set({ scripts });
 
@@ -245,7 +256,7 @@ document.addEventListener('DOMContentLoaded', () => {
         saveEditBtn.disabled = false;
         saveEditBtn.textContent = 'Save Changes';
     };
-
+    
     // --- Initial Setup ---
     addScriptBtn.addEventListener('click', handleAddScript);
     scriptListEl.addEventListener('click', handleListClick);
