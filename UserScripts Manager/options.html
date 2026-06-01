@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Options</title>
+<style>
+        /* Base Reset to fit inside browser modal safely */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            overflow-x: hidden; /* Prevents horizontal scroll */
+        }
+        
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            padding: 16px;
+            color: #1f2937;
+            box-sizing: border-box; /* Ensures padding stays inside the 100% width */
+        }
+
+        .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #e5e7eb;
+            gap: 16px; /* Keeps toggle switch separated from text */
+        }
+        
+        .setting-col {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 12px 0;
+            border-bottom: 1px solid #e5e7eb;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        /* Toggle Switch Styles */
+        .toggle-container {
+            position: relative;
+            display: inline-block;
+            width: 2.5rem;
+            height: 1.5rem;
+            flex-shrink: 0; /* Prevents flexbox from squishing the toggle */
+        }
+        .toggle-checkbox {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .toggle-label {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #d1d5db;
+            border-radius: 9999px;
+            transition: .2s;
+        }
+        .toggle-label:before {
+            position: absolute;
+            content: "";
+            height: 1.25rem;
+            width: 1.25rem;
+            left: 0.125rem;
+            bottom: 0.125rem;
+            background-color: white;
+            border-radius: 50%;
+            transition: .2s;
+        }
+        .toggle-checkbox:checked + .toggle-label { background-color: #4f46e5; }
+        .toggle-checkbox:checked + .toggle-label:before { transform: translateX(1rem); }
+
+        /* Button Styles */
+        .button-group {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .button {
+            background-color: #4f46e5;
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 0.875rem;
+            padding: 0.5rem;
+            border: none;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+            flex: 1; /* Makes both buttons take equal width */
+            text-align: center;
+            min-width: 0; /* Important: prevents buttons from overflowing */
+        }
+        .button:hover { background-color: #4338ca; }
+        .button-secondary {
+            background-color: #e5e7eb;
+            color: #374151;
+        }
+        .button-secondary:hover { background-color: #d1d5db; }
+        
+        /* Status Message */
+        .status-message {
+            font-size: 0.85rem;
+            min-height: 1.25rem;
+            color: #059669; /* Success green */
+            word-wrap: break-word;
+            width: 100%;
+        }
+        .status-error { color: #ef4444; } /* Error red */
+    </style>
+</head>
+<body>
+    <h2 style="margin-top: 0;">Settings</h2>
+    
+    <!-- Debug Mode -->
+    <div class="setting-row">
+        <span>
+            <strong>Debug Mode</strong><br>
+            <small style="color: #6b7280;">Print script execution to the console</small>
+        </span>
+        <label class="toggle-container">
+            <input type="checkbox" id="debug-toggle" class="toggle-checkbox">
+            <span class="toggle-label"></span>
+        </label>
+    </div>
+
+    <!-- Export / Import -->
+    <div class="setting-col">
+        <span>
+            <strong>Data Management</strong><br>
+            <small style="color: #6b7280;">Backup or restore your userscripts</small>
+        </span>
+        <div class="button-group">
+            <button id="export-btn" class="button">Export All</button>
+            <button id="import-btn" class="button button-secondary">Import</button>
+            <!-- Hidden file input -->
+            <input type="file" id="import-file" accept=".json" style="display: none;">
+        </div>
+        <div id="status-message" class="status-message"></div>
+    </div>
+
+    <script src="options.js"></script>
+</body>
+</html>
